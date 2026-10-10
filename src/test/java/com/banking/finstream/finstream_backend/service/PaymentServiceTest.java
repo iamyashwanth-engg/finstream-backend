@@ -89,6 +89,9 @@ class PaymentServiceTest {
         verify(transactionRepository, times(1)).save(any(transaction.class));
         // Uncomment this when Kafka is re-enabled:
         // verify(paymentEventProducer, times(1)).publishPaymentSettled(any());
+        verify(paymentEventProducer, times(1)).publishPaymentSettled(any());
+        verify(accountRepository, times(1)).save(sourceAccount);
+        verify(accountRepository, times(1)).save(destinationAccount);
     }
 
     @Test
