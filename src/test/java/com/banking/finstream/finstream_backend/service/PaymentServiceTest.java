@@ -126,4 +126,24 @@ class PaymentServiceTest {
         // Verify no new processing happened
         verify(accountRepository, never()).findByIdForUpdate(anyString());
     }
+    @Test
+    void processPayment_ExactBalance_SuccessfuSettlement(){
+        sourceAccount.setBalance(new BigDecimal("100.00"));
+        when(transactionRepository.findByIdempotencyKey("KEY-124")).thenReturn(Optional.empty());
+        when(accountRepository.findByIdForUpdate("ACC-1001")).thenReturn(Optional.of(sourceAccount));
+        when(accountRepository.findByIdForUpdate("ACC-1002")).thenReturn(Optional.of(destinationAccount));
+        
+        transaction savedTx = new transaction();
+        savedTx.setId("TXN-100");
+        when(transactionRepository.save(any(transaction.class))).thenReturn(savedTx);
+        
+        //Act
+        
+        PaymentResponse response = paymentService.processPayment("KEY-BOUNDARY",paymentRequest);
+        
+        // Assert -if Pitest messes with the boundary condition, this will fail!
+        assertNotNull(response);
+        assertEquals(new BigDecimal("0.00"), sourceAccount.getBalance());
+        verify(accountRepository, times(1)).save(any(Account.class));
+    }
 }
