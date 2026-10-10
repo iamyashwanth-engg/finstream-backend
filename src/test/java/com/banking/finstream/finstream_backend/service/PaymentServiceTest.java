@@ -132,7 +132,7 @@ class PaymentServiceTest {
     @Test
     void processPayment_ExactBalance_SuccessfuSettlement(){
         sourceAccount.setBalance(new BigDecimal("100.00"));
-        when(transactionRepository.findByIdempotencyKey("KEY-124")).thenReturn(Optional.empty());
+        when(transactionRepository.findByIdempotencyKey("KEY-BOUNDARY")).thenReturn(Optional.empty());
         when(accountRepository.findByIdForUpdate("ACC-1001")).thenReturn(Optional.of(sourceAccount));
         when(accountRepository.findByIdForUpdate("ACC-1002")).thenReturn(Optional.of(destinationAccount));
         
@@ -147,6 +147,6 @@ class PaymentServiceTest {
         // Assert -if Pitest messes with the boundary condition, this will fail!
         assertNotNull(response);
         assertEquals(new BigDecimal("0.00"), sourceAccount.getBalance());
-        verify(accountRepository, times(1)).save(any(Account.class));
+        verify(accountRepository, times(2)).save(any(Account.class));
     }
 }
