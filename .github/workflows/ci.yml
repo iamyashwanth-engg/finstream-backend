@@ -1,0 +1,44 @@
+name: FinStream CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main"]
+  pull_request:
+    branches: [ "main"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    # this creates an ephemeral MySQL database in the cloud just for your karate tests!
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: finstream_db
+          MYSQL_ALLOW_EMPTY_PASSWORD: YES
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --healthtimeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java_version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: make maven Wrapper Executable
+        run: chmod +x ./mvnw
+
+      - name: Run Unit & Karate Integration Tests
+        run: ./mvnw clean test
+
+      - name: Audit Code with PiTest (Mutation Coverage)
+        run: ./mvnw test-compile org.pitest:pitest-maven:mutationCoverage
+
