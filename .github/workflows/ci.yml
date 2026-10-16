@@ -37,7 +37,7 @@ jobs:
 
       - name: Run Unit & Karate Integration Tests
         env:
-          SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/finstream_db
+          SPRING_DATASOURCE_URL: JDBC:mysql://127.0.0.1:3306/finstream_db
           SPRING_DATASOURCE_USERNAME: root
           SPRING_DATASOURCE_PASSWORD: root
           SPRING_JPA_HIBERNATE_DDL_AUTO: validate
@@ -46,7 +46,7 @@ jobs:
 
       - name: Audit Code with PiTest (Mutation Coverage)
         env:
-          SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/finstream_db
+          SPRING_DATASOURCE_URL: JDBC:mysql://127.0.0.1:3306/finstream_db
           SPRING_DATASOURCE_USERNAME: root
           SPRING_DATASOURCE_PASSWORD: root
         run: ./mvnw test-compile org.pitest:pitest-maven:mutationCoverage
