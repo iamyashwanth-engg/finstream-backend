@@ -1,4 +1,4 @@
-CREATE TABLE TRANSACTIONS (
+CREATE TABLE transactions (
     id varchar(36) primary key,
     idempotency_key varchar(128) not null unique,
     account_id varchar(64) not null,
